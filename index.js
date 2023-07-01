@@ -39,55 +39,36 @@ app.post("/registrar", (req, res) => {
 })
 
 app.post("/iniciar-sesion", (req, res) => {
-  const { identifier, password } = req.body
-
+  const { identifier, password } = req.body 
   const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
-
   function passwordIsValid(passwordFromClient, passwordFromDB) {
     return passwordFromClient === passwordFromDB
   }
-
   if(emailRegex.test(identifier)) {
-    
     db.query("SELECT * FROM usuarios WHERE email = ?",
-      [identifier],
-      (err, datos) => {
-        if(err) return res.status(400).json(err)
-
-        const usuario = {...datos[0]}
-
-        if(passwordIsValid(password, usuario.password)) {
-          res.status(200).json(usuario)
-        } else {
-          res.status(400).json({ messsage: "Contrasena incorrecta!" })
-        }
-
+    [identifier],
+    (err, datos) => {
+      if(err) return res.status(400).json(err)
+      const usuario = {...datos[0]}
+      if(passwordIsValid(password, usuario.password)) {
+        res.status(200).json(usuario)
+      } else {
+        res.status(400).json({ messsage: "Contrasena incorrecta!" })
       }
-    )
-
+    })
   } else {
-    
     db.query("SELECT * FROM usuarios WHERE username = ?",
-      [identifier],
-      (err, datos) => {
-        if(err) return res.status(400).json(err)
-
-        const usuario = {...datos[0]}
-
-        if(passwordIsValid(password, usuario.password)) {
-          res.status(200).json(usuario)
-        } else {
-          res.status(400).json({ messsage: "Contrasena incorrecta!" })
-        }
-
-        
+    [identifier],
+    (err, datos) => {
+      if(err) return res.status(400).json(err)
+      const usuario = {...datos[0]}
+      if(passwordIsValid(password, usuario.password)) {
+        res.status(200).json(usuario)
+      } else {
+        res.status(400).json({ messsage: "Contrasena incorrecta!" })
       }
-    )
-
+    })
   }
-
-
-
 })
 
 // Initialization
